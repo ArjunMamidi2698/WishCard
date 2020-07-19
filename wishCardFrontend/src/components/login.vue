@@ -11,13 +11,13 @@
                     </v-card-text>
                     <v-card-actions class="d-block">
                         <div>
-                            <v-btn color="#33a2be">Login</v-btn>
+                            <v-btn color="#33a2be" @click="loginAsUser()">Login</v-btn>
                             <span class="mx-2">OR</span>
                             <v-btn color="#33a2be" @click="loginAsGuest()">Guest Login</v-btn>
                         </div>
                         <br>
                         <span>Don't have account?</span>
-                        <v-btn color="#33a2be">Register</v-btn>
+                        <v-btn color="#33a2be" @click="$router.push('/register')">Register</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-container>
@@ -41,6 +41,9 @@ export default {
     methods: {
         loginAsGuest(){
             this.$router.push('/guestHome/guestID');
+        },
+        loginAsUser(){
+            this.$router.push('/userHome/userID');
         }
     },
 }
