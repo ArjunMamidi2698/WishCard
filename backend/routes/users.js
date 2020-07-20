@@ -12,8 +12,15 @@ router.post('/loginUser', async (req, res) => {
     await wishService.findInDatabase(User, {username: req.body.username, password: req.body.password}, res).then((data) => {
       userData = data;
     });
-    if(userData){
-        res.status(200).send({userId: userData.userId});
+    if(userData && userData.length > 0){
+        await wishService.updateInDatabase(User, { userId: req.body.userId},{
+            $set: {
+                loggedIn: true,
+            }
+        }, res).then( (data) => {
+            console.log(data, 'Updated User data Successfully => user logged in');
+        });
+        res.status(200).send({userId: userData[0].userId});
     } else {
         res.status(201).send({message: 'User Not Found'});
     }
@@ -24,10 +31,10 @@ router.post('/registerUser', async (req, res) => {
     const userObj = req.body;
     // check for availability
     let userData = [];
-    await wishService.findInDatabase(User, {username: req.body.username, password: req.body.password}, res).then((data) => {
+    await wishService.findInDatabase(User, {username: req.body.username}, res).then((data) => {
       userData = data;
     });
-    if(userData){
+    if(userData && userData.length > 0){
         res.status(201).send({message: 'UserName Taken'});
     } else {
         // add user to database
@@ -47,18 +54,35 @@ router.post('/registerUser', async (req, res) => {
             randomId = Math.random().toString(36).slice(2);
         }
 
-        user.userId = userObj.randomId;
-
+        user.userId = randomId;
+        user.loggedIn = true;
         await wishService.addToDatabase(user, res).then((data) => {
             console.log(data, 'saved user data successfully');
         });
-        res.status(200).send({message: 'User Registered Successfully'});
+        res.status(200).send({userId: randomId, message: 'User Registered Successfully'});
     }
 });
 
-// getUserWishLists
-
-
+// logout
+router.post('/logoutUser', async (req, res) => {
+    // verify user details
+    let userData = [];
+    await wishService.findInDatabase(User, {userId: req.body.userId}, res).then((data) => {
+      userData = data;
+    });
+    if(userData && userData.length > 0){
+        await wishService.updateInDatabase(User, { userId: req.body.userId},{
+            $set: {
+                loggedIn: false,
+            }
+        }, res).then( (data) => {
+            console.log('Updated User data Successfully => user logged in');
+        });
+        res.status(200).send({userId: userData.userId});
+    } else {
+        res.status(201).send({message: 'User Not Found'});
+    }
+});
 
 module.exports = router;
 

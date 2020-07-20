@@ -10,7 +10,7 @@
                         <v-text-field solo label="Password" v-model="password"></v-text-field>
                     </v-card-text>
                     <v-card-actions class="d-block">
-                        <v-btn color="#33a2be">Register</v-btn>
+                        <v-btn color="#33a2be" @click="registerUser()">Register</v-btn>
                         <br><br>
                         <span>Already have account?</span>
                         <v-btn color="#33a2be" @click="$router.push('/login')">Login</v-btn>
@@ -22,6 +22,7 @@
 </template>
 <script>
 import wishHeader from '@/components/wishHeader.vue'
+import axios from 'axios';
 
 export default {
     name: 'register',
@@ -35,7 +36,21 @@ export default {
         }
     },
     methods: {
-        
+        registerUser(){
+            const self = this;
+            axios.post('/registerUser', {
+                username: self.username,
+                password: self.password,
+            }).then((res) => {
+                if(res.status == 200){
+                    this.$router.push(`/userHome/${res.data.userId}`);
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
     },
 }
 </script>

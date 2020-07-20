@@ -13,13 +13,11 @@
     </div>
 </template>
 <script>
-import firework from '@/assets/js/fireworks.js'
+import firework from '@/assets/js/fireworks.js';
+import axios from 'axios';
+
 export default {
     name: 'GuestHome',
-    created(){
-        this.wishId = this.$route.params.id;
-        this.checkWishAvailability(this.wishId);
-    },
     data() {
         return {
             message: 'Happy Birthday',
@@ -28,16 +26,37 @@ export default {
             wishNotFound: false,
         }
     },
+    mounted(){
+        this.wishId = this.$route.params.id;
+        this.checkWishAvailability();
+    },
     methods: {
         checkWishAvailability(){
+            const self = this;
             if(this.wishId.trim().length == 0){
                 this.wishNotFound = true;
                 setTimeout(() => {
                     this.goToHome();
                 }, 6000);
             } else {
-                this.wishNotFound = false;
-                firework.show();
+                axios.post('/wishMessage', {
+                    wishId: self.wishId,
+                }).then((res) => {
+                    if(res.status == 200){
+                        this.wishNotFound = false;
+                        firework.show();
+                        self.message = res.data[0].wishMessage;
+                        self.name = res.data[0].name;
+                    } else {
+                        this.wishNotFound = true;
+                        setTimeout(() => {
+                            this.goToHome();
+                        }, 6000);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+                
             }
         },
         goToHome(){

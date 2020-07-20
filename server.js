@@ -10,6 +10,7 @@ var serveStatic = require('serve-static');
 
 
 var userRoute = require('./backend/routes/users');
+var wishRoute = require('./backend/routes/wish');
 
 var db = mongoose.connection;
 var dbconnected = false;
@@ -41,6 +42,7 @@ app.use((req, res, next) => {
     next();
 });
 app.use('/', userRoute);
+app.use('/', wishRoute);
 
 app.get(/.*/, (req, res) => res.sendFile(__dirname + '/wishCardFrontend/dist/index.html'));
 

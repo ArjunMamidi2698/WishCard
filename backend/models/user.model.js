@@ -2,7 +2,9 @@ var mongoose = require('mongoose');
 
 var User = mongoose.model('users', {
     username: String,
+    password: String,
     userId: String,
+    loggedIn: Boolean,
     wishes: Array, // array of wish id's
 });
 

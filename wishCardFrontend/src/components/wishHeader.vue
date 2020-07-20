@@ -5,14 +5,32 @@
             <caption>spread your wishes.....</caption>
         </div>
         <v-btn v-if="$route.name !== 'Login' && $route.name !== 'UserHome'" dark color="#33a2be" class="login-btn" @click="$router.push('/login')">Login</v-btn>
-        <v-btn v-if="$route.name === 'UserHome'" dark color="#33a2be" class="login-btn" @click="$router.push('/login')">Logout</v-btn>
+        <v-btn v-if="$route.name === 'UserHome'" dark color="#33a2be" class="login-btn" @click="logoutUser()">Logout</v-btn>
     </div>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
     name: 'WishHeader',
     created() {
 
+    },
+    methods: {
+        logoutUser(){
+            const self = this;
+            axios.post('/logoutUser', {
+                userId: self.$route.params.id,
+            }).then((res) => {
+                if(res.status == 200){
+                    this.$router.push('/login');
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
     },
 }
 </script>

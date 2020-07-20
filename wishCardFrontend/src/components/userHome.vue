@@ -37,6 +37,7 @@
 </template>
 <script>
 import wishHeader from '@/components/wishHeader.vue'
+import axios from 'axios';
 
 export default {
     name: 'userHome',
@@ -111,10 +112,53 @@ export default {
             ],
         }
     },
+    mounted(){
+        this.getWishesList();
+    },
     methods: {
+        getWishesList(){
+            const self = this;
+            axios.post('/wishMessagesList', {
+                userId: self.$route.params.id,
+            }).then((res) => {
+                if(res.status == 200){
+                    self.wishes = res.data.data;
+                    self.wishes.forEach(obj => {
+                        obj['edit'] = false;
+                        obj['copiedContent'] = false;
+                    });
+                } else {
+                    self.wishes = [];
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                setTimeout(() => {
+                    this.$route.push('/login');
+                    alert('Not Authorized');
+                }, 4000);
+                console.log(err);
+            });
+        },
         deleteWishLink(wishObj, index){
             const self = this;
-            self.wishes.splice(index, 1);
+            axios.post('/deleteWish', {
+                userId: self.$route.params.id,
+                wish: {
+                    wishId: wishObj.wishId,
+                }
+            }).then((res) => {
+                if(res.status == 200){
+                    self.wishes.splice(index, 1);
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                setTimeout(() => {
+                    this.$route.push('/login');
+                    alert('Not Authorized');
+                }, 4000);
+                console.log(err);
+            });
         },
         copyWishLink(wish){
             const self = this;
@@ -144,13 +188,33 @@ export default {
                     name: wish.name,
                     wish: wish.wish
                 };
+                wish.edit = !wish.edit;
             } else {
                 self.updateWish(wish);
             }
-            wish.edit = !wish.edit;
         },
         updateWish(wish){
             const self = this;
+            axios.post('/updateWish', {
+                userId: self.$route.params.id,
+                wish: {
+                    wishId: wish.wishId,
+                    wishMessage: wish.wish,
+                    name: wish.name,
+                }
+            }).then((res) => {
+                if(res.status == 200){
+                    wish.edit = !wish.edit;
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                setTimeout(() => {
+                    this.$route.push('/login');
+                    alert('Not Authorized');
+                }, 4000);
+                console.log(err);
+            });
         },
         cancelEdit(wish, index){
             const self = this;
@@ -158,6 +222,7 @@ export default {
             wish.wish = wish.dummyData.wish || wish.wish;
             wish.edit = !wish.edit;
         },
+
         createWishLink(){
             const self = this;
             let options = {
@@ -170,8 +235,34 @@ export default {
         },
         saveWish(){
             const self = this;
-            self.showCreateWishPopup = false;
-            
+            axios.post('/addWish', {
+                userId: self.$route.params.id,
+                wish: {
+                    name: self.newWish.name,
+                    wishMessage: self.newWish.wish, 
+                }
+            }).then((res) => {
+                if(res.status == 200){
+                    self.showCreateWishPopup = false;
+                    self.wishes.push(res.data.wish);
+                    self.resetFormData();
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                setTimeout(() => {
+                    this.$route.push('/login');
+                    alert('Not Authorized');
+                }, 4000);
+                console.log(err);
+            });
+        },
+        resetFormData(){
+            const self = this;
+            self.newWish = {
+                name: '',
+                wish: '',
+            };
         },
         closeNewWishPopup(){
             const self = this;

@@ -31,6 +31,7 @@
 </template>
 <script>
 import wishHeader from '@/components/wishHeader.vue'
+import axios from 'axios';
 
 export default {
     name: 'GuestHome',
@@ -49,10 +50,35 @@ export default {
     },
     methods: {
         getWishLink(){
-            this.linkProvided = true;
+            const self = this;
+            axios.post('/addWish', {
+                userId: self.$route.params.id,
+                wish: {
+                    name: self.name,
+                    wishMessage: self.wishMessage, 
+                    guest: self.guestName
+                }
+            }).then((res) => {
+                if(res.status == 200){
+                    this.linkProvided = true;
+                    self.wishLink = res.data.wish.link;
+                    self.resetFormData();
+                } else {
+                    alert('Something went wrong');
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        },
+        resetFormData(){
+            const self = this;
+            self.guestName = '';
+            self.name = '';
+            self.wishMessage = '';
         },
         createMore(){
             this.linkProvided = false;
+            self.resetFormData();
         },
         copyWishLink(){
             const self = this;

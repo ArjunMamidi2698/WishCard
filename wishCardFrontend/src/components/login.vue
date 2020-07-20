@@ -7,7 +7,7 @@
                     <v-card-title>Login</v-card-title>
                     <v-card-text>
                         <v-text-field solo label="Username" v-model="username"></v-text-field>
-                        <v-text-field solo label="Password" v-model="password"></v-text-field>
+                        <v-text-field solo type="password" label="Password" v-model="password"></v-text-field>
                     </v-card-text>
                     <v-card-actions class="d-block">
                         <div>
@@ -26,6 +26,7 @@
 </template>
 <script>
 import wishHeader from '@/components/wishHeader.vue'
+import axios from 'axios';
 
 export default {
     name: 'login',
@@ -40,10 +41,22 @@ export default {
     },
     methods: {
         loginAsGuest(){
-            this.$router.push('/guestHome/guestID');
+            this.$router.push('/guestHome/9AR91439NU9');
         },
         loginAsUser(){
-            this.$router.push('/userHome/userID');
+            const self = this;
+            axios.post('/loginUser', {
+                username: self.username,
+                password: self.password,
+            }).then((res) => {
+                if(res.status == 200){
+                    this.$router.push(`/userHome/${res.data.userId}`);
+                } else {
+                    alert('Invalid Credentials');
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
         }
     },
 }
