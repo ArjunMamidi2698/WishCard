@@ -1,9 +1,7 @@
-var DBModel = require("../models/user.model.js");
-var User = DBModel.User;
 
-var findInDatabase = async function (query, res){
+var findInDatabase = async function (model, query, res){
     let result = 'result';
-    await User.findOne(query, (err, data) => {
+    await model.find(query, (err, data) => {
         if(err){
             const errObj = {
                 showSnackbar: true,
@@ -35,9 +33,9 @@ var addToDatabase = async function(modelInstance, res) {
     return result;
 }
 
-var updateInDatabase = async function(query, options, res){
+var updateInDatabase = async function(model, query, options, res){
     let result = 'result';
-    await User.updateOne(query, options, (err, data) => {
+    await model.updateOne(query, options, (err, data) => {
         if(err){
             const errObj = {
                 showSnackbar: true,
@@ -52,9 +50,9 @@ var updateInDatabase = async function(query, options, res){
     return result;
 }
 
-var deleteFromDatabase = async function(query, res){
+var deleteFromDatabase = async function(model, query, res){
     let result = 'result';
-    await User.deleteOne(query, (err, data) => {
+    await model.deleteOne(query, (err, data) => {
         if(err){
             const errObj = {
                 showSnackbar: true,

@@ -9,8 +9,7 @@ var server = require('http').createServer(app);
 var serveStatic = require('serve-static');
 
 
-// var commonRoute = require('./backend/routes/common');
-// var roomRoute = require('./backend/routes/room');
+var userRoute = require('./backend/routes/users');
 
 var db = mongoose.connection;
 var dbconnected = false;
@@ -41,6 +40,8 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     next();
 });
+app.use('/', userRoute);
+
 app.get(/.*/, (req, res) => res.sendFile(__dirname + '/wishCardFrontend/dist/index.html'));
 
 const port = process.env.PORT || 8179;
