@@ -1,13 +1,44 @@
 <template>
   <div id="app">
     <v-app>
+      <v-snackbar
+        v-model="showSnackbar"
+        top center :timeout=10000
+        :color="snackBarColor"
+        auto-height>
+        <v-icon dark v-if="snackBarColor == 'error'" class="pr-1">warning</v-icon>
+        <v-icon dark v-else class="pr-1">done</v-icon>
+        <b v-html="snackBarMessage"></b>
+        <v-btn color="black" text @click="showSnackbar = false;">Close</v-btn>
+      </v-snackbar>
       <router-view/>
+      <wishFooter/>
     </v-app>
   </div>
 </template>
 <script>
+import { EventBus } from '@/assets/js/eventBus';
+import wishFooter from '@/components/wishFooter';
+
 export default {
   name: 'App',
+  components:{
+    wishFooter,
+  },
+  data() {
+    return {
+      showSnackbar: false,
+      snackBarColor: 'error',
+      snackBarMessage: 'Something went wrong!!'
+    }
+  },
+  mounted() {
+    EventBus.$on('showSnackbar', (data) => {
+      this.showSnackbar = true;
+      this.snackBarColor = data.color;
+      this.snackBarMessage = data.message;
+    });
+  },
 }
 </script>
 
@@ -19,5 +50,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.error{
+  background-color: red;
+  border-color: red;
 }
 </style>

@@ -8,7 +8,9 @@
                     <v-card-text>
                         <v-text-field solo label="Your Name" v-model="guestName"></v-text-field>
                         <v-text-field solo label="Whom you wanna wish*" v-model="name"></v-text-field>
-                        <v-textarea solo label="Your wish*" v-model="wishMessage"></v-textarea>
+                        <v-textarea solo label="Your wish*" rows="3" v-model="wishMessage"></v-textarea>
+                        <b>Preview Wish</b>
+                        <v-textarea solo label="Preview Wish*" rows="3" readonly v-model="previewWish"></v-textarea>
                     </v-card-text>
                     <v-card-actions class="d-block">
                         <v-btn color="#33a2be" @click="getWishLink()">Get Wish Link</v-btn>
@@ -23,6 +25,7 @@
                         <a :href="wishLink" class="white--text">{{wishLink}}</a>
                         <v-btn icon @click="copyWishLink()"><v-icon>{{copiedContent ? 'done' : 'content_copy'}}</v-icon></v-btn>
                     </div>
+                    <span>Spread your wishes with your wish link</span><br><br>
                     <v-btn dark color="#33a2be" @click="createMore()">Create More</v-btn>
                 </v-card>
             </v-container>
@@ -30,6 +33,7 @@
     </div>
 </template>
 <script>
+import { EventBus } from '@/assets/js/eventBus';
 import wishHeader from '@/components/wishHeader.vue'
 import axios from 'axios';
 
@@ -48,27 +52,53 @@ export default {
             copiedContent: false,
         }
     },
+    computed: {
+        previewWish(){
+           return `${this.wishMessage} ${this.name}` 
+        }  
+    },
+    mounted(){
+        this.guestExistence();
+    },
     methods: {
-        getWishLink(){
+        guestExistence(){
             const self = this;
-            axios.post('/addWish', {
+            axios.post('/guestUser', {
                 userId: self.$route.params.id,
-                wish: {
-                    name: self.name,
-                    wishMessage: self.wishMessage, 
-                    guest: self.guestName
-                }
             }).then((res) => {
                 if(res.status == 200){
-                    this.linkProvided = true;
-                    self.wishLink = res.data.wish.link;
-                    self.resetFormData();
+                    // nothing
                 } else {
                     alert('Something went wrong');
                 }
             }).catch((err) => {
                 console.log(err);
             });
+        },
+        getWishLink(){
+            const self = this;
+            if(self.name.trim() == '' || self.wishMessage.trim() == ''){
+                EventBus.$emit('showSnackbar',{ color: 'error', message: '* Fields are Mandatory'});
+            } else {
+                axios.post('/addWish', {
+                    userId: self.$route.params.id,
+                    wish: {
+                        name: self.name,
+                        wishMessage: self.wishMessage, 
+                        guest: self.guestName
+                    }
+                }).then((res) => {
+                    if(res.status == 200){
+                        this.linkProvided = true;
+                        self.wishLink = res.data.wish.wishLink;
+                        self.resetFormData();
+                    } else {
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                    }
+                }).catch((err) => {
+                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                });
+            }
         },
         resetFormData(){
             const self = this;

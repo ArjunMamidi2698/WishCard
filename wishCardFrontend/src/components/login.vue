@@ -5,6 +5,7 @@
             <v-container>
                 <v-card dark class="login-card">
                     <v-card-title>Login</v-card-title>
+                    <v-subtitle style="font-style:italic;">Your wish cards are waiting inside<v-icon>mood</v-icon></v-subtitle>
                     <v-card-text>
                         <v-text-field solo label="Username" v-model="username"></v-text-field>
                         <v-text-field solo type="password" label="Password" v-model="password"></v-text-field>
@@ -25,6 +26,7 @@
     </div>
 </template>
 <script>
+import { EventBus } from '@/assets/js/eventBus';
 import wishHeader from '@/components/wishHeader.vue'
 import axios from 'axios';
 
@@ -41,22 +43,27 @@ export default {
     },
     methods: {
         loginAsGuest(){
-            this.$router.push('/guestHome/9AR91439NU9');
+            this.$router.push('/guestHome/19S15O14N21U');
         },
         loginAsUser(){
             const self = this;
-            axios.post('/loginUser', {
-                username: self.username,
-                password: self.password,
-            }).then((res) => {
-                if(res.status == 200){
-                    this.$router.push(`/userHome/${res.data.userId}`);
-                } else {
-                    alert('Invalid Credentials');
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
+            if(self.username.trim() == '' || self.password.trim() == ''){
+                EventBus.$emit('showSnackbar',{ color: 'error', message: '* Fields are Mandatory'});
+            } else {
+                axios.post('/loginUser', {
+                    username: self.username,
+                    password: self.password,
+                }).then((res) => {
+                    if(res.status == 200){
+                        this.$router.push(`/userHome/${res.data.userId}`);
+                        EventBus.$emit('showSnackbar',{ color: 'success', message: 'Logged In Successfully'});
+                    } else {
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Invalid Credentials'});
+                    }
+                }).catch((err) => {
+                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                });
+            }
         }
     },
 }

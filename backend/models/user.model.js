@@ -18,7 +18,8 @@ var Wish = mongoose.model('wishes', {
     wishMessage: String,
     wishLink: String,
     name: String,
-    userID: String
+    guestName: String,
+    userId: String,
 });
 
 module.exports.Wish=Wish;

@@ -5,9 +5,10 @@
             <v-container>
                 <v-card dark class="register-card">
                     <v-card-title>Register</v-card-title>
+                    <v-subtitle style="font-style:italic;">Save Your wish cards here<v-icon>mood</v-icon></v-subtitle>
                     <v-card-text>
                         <v-text-field solo label="Username" v-model="username"></v-text-field>
-                        <v-text-field solo label="Password" v-model="password"></v-text-field>
+                        <v-text-field solo label="Password" type="password" v-model="password"></v-text-field>
                     </v-card-text>
                     <v-card-actions class="d-block">
                         <v-btn color="#33a2be" @click="registerUser()">Register</v-btn>
@@ -21,6 +22,7 @@
     </div>
 </template>
 <script>
+import { EventBus } from '@/assets/js/eventBus';
 import wishHeader from '@/components/wishHeader.vue'
 import axios from 'axios';
 
@@ -38,18 +40,23 @@ export default {
     methods: {
         registerUser(){
             const self = this;
-            axios.post('/registerUser', {
-                username: self.username,
-                password: self.password,
-            }).then((res) => {
-                if(res.status == 200){
-                    this.$router.push(`/userHome/${res.data.userId}`);
-                } else {
-                    alert('Something went wrong');
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
+            if(self.username.trim() == '' || self.password.trim() == ''){
+                EventBus.$emit('showSnackbar',{ color: 'error', message: '* Fields are Mandatory'});
+            } else {
+                axios.post('/registerUser', {
+                    username: self.username,
+                    password: self.password,
+                }).then((res) => {
+                    if(res.status == 200){
+                        this.$router.push(`/userHome/${res.data.userId}`);
+                        EventBus.$emit('showSnackbar',{ color: 'success', message: 'Registered Successfully'});
+                    } else {
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'UserName Taken'});
+                    }
+                }).catch((err) => {
+                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                });
+            }
         }
     },
 }

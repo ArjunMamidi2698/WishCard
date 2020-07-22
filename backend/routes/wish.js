@@ -56,18 +56,22 @@ router.post('/addWish', async (req, res) => {
                 console.log(data, 'saved user data successfully');
             });
 
-            var user = new User();
-            user.wishes.push(randomId);
-
-            await wishService.addToDatabase(user, res).then((data) => {
-                console.log(data, 'saved user data successfully');
+            let userWishes = userData[0].wishes;
+            userWishes.push(randomId);
+            await wishService.updateInDatabase(User, { userId: req.body.userId },{
+                $set: {
+                    wishes: userWishes,
+                }
+            }, res).then( (data) => {
+            console.log('Updated User data Successfully');
             });
+
             const wishItem = {
                 wishId: randomId,
-                wish: req.body.wish.wishMessage,
+                wishMessage: req.body.wish.wishMessage,
                 name: req.body.wish.name,
                 edit: false,
-                link: wishLink,
+                wishLink: wishLink,
                 copiedContent: false,
             }
             res.status(200).send({wish: wishItem ,message: 'Wish Created Successfully'});
@@ -86,13 +90,12 @@ router.post('/wishMessagesList', async (req, res) => {
     await wishService.findInDatabase(User, {userId: req.body.userId}, res).then((data) => {
       userData = data;
     });
-    console.log(userData[0]);
     if(userData && userData.length > 0){
         if(userData[0].loggedIn){
             if(userData[0].wishes && userData[0].wishes.length > 0){
                 let wishesData = [];
                 await wishService.findInDatabase(Wish, {userId: req.body.userId}, res).then((data) => {
-                wishesData = data;
+                    wishesData = data;
                 });
                 res.status(200).send({data: wishesData});
             } else {
@@ -115,7 +118,7 @@ router.post('/updateWish', async (req, res) => {
     });
     if(userData && userData.length > 0){
         if(userData[0].loggedIn){
-            if(userData[0].wishes.indexOf(req.body.wishId) > -1){
+            if(userData[0].wishes.indexOf(req.body.wish.wishId) > -1){
                 await wishService.updateInDatabase(Wish, { userId: req.body.userId, wishId:req.body.wish.wishId},{
                     $set: {
                         wishMessage: req.body.wish.wishMessage,

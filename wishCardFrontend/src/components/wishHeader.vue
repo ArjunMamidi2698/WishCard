@@ -9,6 +9,7 @@
     </div>
 </template>
 <script>
+import { EventBus } from '@/assets/js/eventBus';
 import axios from 'axios';
 
 export default {
@@ -24,11 +25,12 @@ export default {
             }).then((res) => {
                 if(res.status == 200){
                     this.$router.push('/login');
+                    EventBus.$emit('showSnackbar',{ color: 'success', message: 'Logged Out Successfully'});
                 } else {
-                    alert('Something went wrong');
+                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
                 }
             }).catch((err) => {
-                console.log(err);
+                EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
             });
         }
     },

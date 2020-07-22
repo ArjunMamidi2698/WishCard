@@ -45,8 +45,8 @@ export default {
                     if(res.status == 200){
                         this.wishNotFound = false;
                         firework.show();
-                        self.message = res.data[0].wishMessage;
-                        self.name = res.data[0].name;
+                        self.message = res.data.data[0].wishMessage;
+                        self.name = res.data.data[0].name;
                     } else {
                         this.wishNotFound = true;
                         setTimeout(() => {
