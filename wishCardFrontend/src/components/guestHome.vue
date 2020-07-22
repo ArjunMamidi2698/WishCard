@@ -7,7 +7,7 @@
                     <v-card-title>Add Your Details</v-card-title>
                     <v-card-text>
                         <v-text-field solo label="Your Name" v-model="guestName"></v-text-field>
-                        <v-text-field solo label="Whom you wanna wish*" v-model="name"></v-text-field>
+                        <v-text-field solo label="Whom you wanna wish" v-model="name"></v-text-field>
                         <v-textarea solo label="Your wish*" rows="3" v-model="wishMessage"></v-textarea>
                         <b>Preview Wish</b>
                         <v-textarea solo label="Preview Wish*" rows="3" readonly v-model="previewWish"></v-textarea>
@@ -77,7 +77,7 @@ export default {
         },
         getWishLink(){
             const self = this;
-            if(self.name.trim() == '' || self.wishMessage.trim() == ''){
+            if(self.wishMessage.trim() == ''){
                 EventBus.$emit('showSnackbar',{ color: 'error', message: '* Fields are Mandatory'});
             } else {
                 axios.post('/addWish', {

@@ -1,0 +1,1 @@
+web: cd wishCardFrontend && npm build && cd .. && npm run start

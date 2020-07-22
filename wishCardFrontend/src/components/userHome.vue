@@ -24,7 +24,7 @@
                         <v-divider class="my-2"></v-divider>
                         <h2 class="text-left">Add Your Wish details</h2>
                         <div class="d-flex">
-                            <v-text-field solo v-model="newWish.name" hide-details class="my-3 mr-2" label="Whom you wanna wish*"></v-text-field>
+                            <v-text-field solo v-model="newWish.name" hide-details class="my-3 mr-2" label="Whom you wanna wish"></v-text-field>
                             <v-text-field solo v-model="newWish.wishMessage" hide-details class="my-3" label="Your wish*"></v-text-field>
                             <v-btn icon @click="saveWish()" class="align-self-center"><v-icon>done</v-icon></v-btn>
                             <v-btn icon @click="closeNewWishPopup()" class="align-self-center"><v-icon>close</v-icon></v-btn>
@@ -61,65 +61,7 @@ export default {
                 name: '',
                 wishMessage: '',
             },
-            wishes: [
-                {
-                    wishId: '1',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '2',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '3',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '4',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '5',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '6',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '7',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },{
-                    wishId: '8',
-                    wishMessage: 'wishMessage message',
-                    name: 'Arjun',
-                    edit: false,
-                    wishLink: 'http://localhost:2698/#/wishView/wishId',
-                    copiedContent: false,
-                },
-            ],
+            wishes: [],
         }
     },
     mounted(){
@@ -143,9 +85,9 @@ export default {
                 }
             }).catch((err) => {
                 if(err.status == 403){
+                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                     setTimeout(() => {
                         this.$router.push('/login');
-                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                     }, 4000);
                 } else {
                     EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
@@ -169,9 +111,9 @@ export default {
                     }
                 }).catch((err) => {
                     if(err.status == 403){
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                         setTimeout(() => {
                             this.$router.push('/login');
-                            EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                         }, 4000);
                     }else {
                         EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
@@ -214,30 +156,34 @@ export default {
         },
         updateWish(wish){
             const self = this;
-            axios.post('/updateWish', {
-                userId: self.$route.params.id,
-                wish: {
-                    wishId: wish.wishId,
-                    wishMessage: wish.wishMessage,
-                    name: wish.name,
-                }
-            }).then((res) => {
-                if(res.status == 200){
-                    wish.edit = !wish.edit;
-                    EventBus.$emit('showSnackbar',{ color: 'success', message: 'Updated Wish Successfully'});
-                } else {
-                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
-                }
-            }).catch((err) => {
-                if(err.status == 403){
-                    setTimeout(() => {
-                        this.$router.push('/login');
+            if(wish.wishMessage.trim() == ''){
+                EventBus.$emit('showSnackbar',{ color: 'error', message: 'Wish Message cannot be empty'});
+            } else {
+                axios.post('/updateWish', {
+                    userId: self.$route.params.id,
+                    wish: {
+                        wishId: wish.wishId,
+                        wishMessage: wish.wishMessage,
+                        name: wish.name,
+                    }
+                }).then((res) => {
+                    if(res.status == 200){
+                        wish.edit = !wish.edit;
+                        EventBus.$emit('showSnackbar',{ color: 'success', message: 'Updated Wish Successfully'});
+                    } else {
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                    }
+                }).catch((err) => {
+                    if(err.status == 403){
                         EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
-                    }, 4000);
-                }else {
-                    EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
-                }
-            });
+                        setTimeout(() => {
+                            this.$router.push('/login');
+                        }, 4000);
+                    }else {
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
+                    }
+                });
+            }
         },
         cancelEdit(wish, index){
             const self = this;
@@ -258,7 +204,7 @@ export default {
         },
         saveWish(){
             const self = this;
-            if(self.newWish.name.trim() == '' || self.newWish.wishMessage.trim() == ''){
+            if(self.newWish.wishMessage.trim() == ''){
                 EventBus.$emit('showSnackbar',{ color: 'error', message: '* Fields are Mandatory'});
             } else {
                 axios.post('/addWish', {
@@ -278,9 +224,9 @@ export default {
                     }
                 }).catch((err) => {
                     if(err.status == 403){
+                        EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                         setTimeout(() => {
                             this.$router.push('/login');
-                            EventBus.$emit('showSnackbar',{ color: 'error', message: 'Not Authorized'});
                         }, 4000);
                     }else {
                         EventBus.$emit('showSnackbar',{ color: 'error', message: 'Something went wrong'});
