@@ -1,0 +1,5 @@
+Instructions:
+
+release in PROD mode
+remove proxy table
+mongodb to PROD
