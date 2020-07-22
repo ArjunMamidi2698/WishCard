@@ -20,8 +20,8 @@ export default {
     name: 'GuestHome',
     data() {
         return {
-            message: 'Happy Birthday',
-            name: 'Arjun',
+            message: '',
+            name: '',
             wishId: '',
             wishNotFound: false,
         }
