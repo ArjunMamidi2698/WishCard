@@ -64,7 +64,7 @@ export default {
             wishes: [],
         }
     },
-    mounted(){
+    created(){
         this.getWishesList();
     },
     methods: {

@@ -84,8 +84,8 @@ export default {
     }
     .home-btn{
         z-index: 1;
-        position: relative;
-        top:14rem;
+        // position: absolute;
+        // bottom:3rem;
     }
 }
 </style>

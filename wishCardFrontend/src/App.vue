@@ -4,15 +4,17 @@
       <v-snackbar
         v-model="showSnackbar"
         top center :timeout=10000
-        :color="snackBarColor"
-        auto-height>
+        :color="snackBarColor">
         <v-icon dark v-if="snackBarColor == 'error'" class="pr-1">warning</v-icon>
         <v-icon dark v-else class="pr-1">done</v-icon>
         <b v-html="snackBarMessage"></b>
         <v-btn color="black" text @click="showSnackbar = false;">Close</v-btn>
       </v-snackbar>
       <router-view/>
-      <wishFooter/>
+      <v-col style="display:contents;">
+        <v-spacer></v-spacer>
+        <wishFooter/>
+      </v-col>
     </v-app>
   </div>
 </template>
@@ -45,6 +47,7 @@ export default {
 <style>
 #app {
   min-width: 700px;
+  min-height: 700px;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

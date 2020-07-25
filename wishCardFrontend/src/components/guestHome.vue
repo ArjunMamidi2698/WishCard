@@ -57,7 +57,7 @@ export default {
            return `${this.wishMessage} ${this.name}` 
         }  
     },
-    mounted(){
+    created(){
         this.guestExistence();
     },
     methods: {

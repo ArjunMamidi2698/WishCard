@@ -12,7 +12,7 @@ var findInDatabase = async function (model, query, res){
             throw err;
         }
         result = data;
-    })
+    });
     return result;
 }
 

@@ -5,7 +5,7 @@
             <v-container>
                 <v-card dark class="register-card">
                     <v-card-title>Register</v-card-title>
-                    <v-subtitle style="font-style:italic;">Save Your wish cards here<v-icon>mood</v-icon></v-subtitle>
+                    <v-card-subtitle style="font-style:italic;font-size: 16px;">Save Your wish cards here<v-icon small>mood</v-icon></v-card-subtitle>
                     <v-card-text>
                         <v-text-field solo label="Username" v-model="username"></v-text-field>
                         <v-text-field solo label="Password" type="password" v-model="password"></v-text-field>

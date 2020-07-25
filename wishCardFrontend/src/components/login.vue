@@ -5,7 +5,7 @@
             <v-container>
                 <v-card dark class="login-card">
                     <v-card-title>Login</v-card-title>
-                    <v-subtitle style="font-style:italic;">Your wish cards are waiting inside<v-icon>mood</v-icon></v-subtitle>
+                    <v-card-subtitle style="font-style:italic;font-size: 16px;">Your wish cards are waiting inside<v-icon medium>mood</v-icon></v-card-subtitle>
                     <v-card-text>
                         <v-text-field solo label="Username" v-model="username"></v-text-field>
                         <v-text-field solo type="password" label="Password" v-model="password"></v-text-field>
@@ -72,7 +72,7 @@ export default {
 .login{
     align-self: center;
     position: relative;
-    top: 5rem;
+    // top: 5rem;
     .login-card{
         margin: auto;
         background: linear-gradient(45deg, #6a808a, #6a809a, #6a810a, #6a810b);
