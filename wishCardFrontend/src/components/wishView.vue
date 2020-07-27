@@ -2,8 +2,8 @@
     <div class="wish-view">
         <canvas id="canvas"></canvas>
         <v-card dark color="#fff0f000" class="wish-content" v-if="!wishNotFound">
-            <h1>{{message}}</h1>
-            <h1>{{name}}</h1>
+            <h1><Roller :text="message" :transition="1" :wordWrap="1" :charList="['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']"></Roller></h1>
+            <h1><Roller :text="name" :transition="2" :wordWrap="1" :charList="['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']"></Roller></h1>
         </v-card>
         <div v-else class="wish-content">
             <h4>Wish Not Found</h4>
@@ -13,31 +13,54 @@
     </div>
 </template>
 <script>
-import firework from '@/assets/js/fireworks.js'
+import firework from '@/assets/js/fireworks.js';
+import axios from 'axios';
+import Roller from "vue-roller";
+
 export default {
     name: 'GuestHome',
-    created(){
-        this.wishId = this.$route.params.id;
-        this.checkWishAvailability(this.wishId);
+    components: {
+        Roller,
     },
     data() {
         return {
-            message: 'Happy Birthday',
-            name: 'Arjun',
+            message: '',
+            name: '',
             wishId: '',
             wishNotFound: false,
         }
     },
+    created(){
+        this.wishId = this.$route.params.id;
+        this.checkWishAvailability();
+    },
     methods: {
         checkWishAvailability(){
+            const self = this;
             if(this.wishId.trim().length == 0){
                 this.wishNotFound = true;
                 setTimeout(() => {
                     this.goToHome();
                 }, 6000);
             } else {
-                this.wishNotFound = false;
-                firework.show();
+                axios.post('/wishMessage', {
+                    wishId: self.wishId,
+                }).then((res) => {
+                    if(res.status == 200){
+                        this.wishNotFound = false;
+                        firework.show();
+                        self.message = res.data.data[0].wishMessage;
+                        self.name = res.data.data[0].name;
+                    } else {
+                        this.wishNotFound = true;
+                        setTimeout(() => {
+                            this.goToHome();
+                        }, 6000);
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+                
             }
         },
         goToHome(){
@@ -54,8 +77,13 @@ export default {
     .wish-content{
         z-index: 1;
         h1{
-            font-size: 10rem;
+            font-size: 8rem;
             color: white;
+            text-align: -webkit-center;
+            text-align: -moz-center;
+            text-transform: capitalize;
+            font-variant: all-small-caps;
+            font-family: auto;
         }
         h4{
             color: white;
@@ -65,8 +93,12 @@ export default {
     }
     .home-btn{
         z-index: 1;
-        position: relative;
-        top:14rem;
+        // position: absolute;
+        // bottom:3rem;
+    }
+    .roller .rollerBlock {
+        color: white;
+        z-index: 1;
     }
 }
 </style>
