@@ -3,19 +3,28 @@
         <wishHeader/>
         <div class="guest-home">
             <v-container>
-                <v-card dark class="guest-home-card" v-if="!linkProvided">
-                    <v-card-title>Add Your Details</v-card-title>
-                    <v-card-text>
-                        <v-text-field solo label="Your Name" v-model="guestName"></v-text-field>
-                        <v-text-field solo label="Whom you wanna wish" v-model="name"></v-text-field>
-                        <v-textarea solo label="Your wish*" rows="3" v-model="wishMessage"></v-textarea>
-                        <b>Preview Wish</b>
-                        <v-textarea solo label="Preview Wish*" rows="3" readonly v-model="previewWish"></v-textarea>
-                    </v-card-text>
-                    <v-card-actions class="d-block">
-                        <v-btn color="#33a2be" @click="getWishLink()">Get Wish Link</v-btn>
-                    </v-card-actions>
-                </v-card>
+                <v-row v-if="!linkProvided">
+                    <v-col cols="6">
+                        <v-card dark class="guest-home-card">
+                            <v-card-title>Add Your Details</v-card-title>
+                            <v-card-text>
+                                <v-text-field solo label="Your Name" v-model="guestName"></v-text-field>
+                                <v-text-field solo label="Whom you wanna wish" v-model="name"></v-text-field>
+                                <v-textarea solo label="Your wish*" rows="3" v-model="wishMessage"></v-textarea>
+                                <b>Preview Wish</b>
+                                <v-textarea solo label="Preview Wish*" rows="3" readonly v-model="previewWish"></v-textarea>
+                            </v-card-text>
+                            <v-card-actions class="d-block">
+                                <v-btn color="#33a2be" @click="getWishLink()">Get Wish Link</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-card dark class="guest-home-preview-card">
+                            <iframe src="http://localhost:2698/#/previewWish/" height="622" width="570"></iframe>
+                        </v-card>
+                    </v-col>
+                </v-row>
                 <v-card dark v-else class="wish-link-card">
                         <span class="display-1">
                             Here is your wish link
@@ -34,13 +43,15 @@
 </template>
 <script>
 import { EventBus } from '@/assets/js/eventBus';
-import wishHeader from '@/components/wishHeader.vue'
+import wishHeader from '@/components/wishHeader.vue';
 import axios from 'axios';
+import wishView from '@/components/wishView.vue';
 
 export default {
     name: 'GuestHome',
     components: {
         wishHeader,
+        wishView,
     },
     data() {
         return {
@@ -50,6 +61,7 @@ export default {
             linkProvided: false,
             wishLink: 'http://localhost:2698/#/wishView/arjun',
             copiedContent: false,
+            backgroundAnimation: 'fireworks' // TODO - Maintain a list
         }
     },
     computed: {
@@ -59,6 +71,17 @@ export default {
     },
     created(){
         this.guestExistence();
+    },
+    watch: {
+        name(){
+            EventBus.$emit('previewPageName', this.name);
+        },
+        wishMessage(){
+            EventBus.$emit('previewPageWishMessage', this.wishMessage);
+        },
+        backgroundAnimation(){
+            EventBus.$emit('previewPageBackgroundAnimation', this.backgroundAnimation);
+        }
     },
     methods: {
         guestExistence(){
@@ -137,7 +160,7 @@ export default {
 .guest-home{
     align-self: center;
     position: relative;
-    top: 5rem;
+    // top: 5rem;
     .guest-home-card{
         margin: auto;
         background: linear-gradient(45deg, #6a808a, #6a809a, #6a810a, #6a810b);
@@ -155,6 +178,9 @@ export default {
                 margin: auto;
             }
         }
+    }
+    .guest-home-preview-card{
+        height: 622px;
     }
     .wish-link-card{
         margin: auto;

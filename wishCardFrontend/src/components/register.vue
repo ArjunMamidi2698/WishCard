@@ -65,7 +65,7 @@ export default {
 .register{
     align-self: center;
     position: relative;
-    top: 5rem;
+    // top: 5rem;
     .register-card{
         margin: auto;
         background: linear-gradient(45deg, #6a808a, #6a809a, #6a810a, #6a810b);

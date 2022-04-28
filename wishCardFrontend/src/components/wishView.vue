@@ -1,5 +1,5 @@
 <template>
-    <div class="wish-view">
+    <div class="wish-view" id="wish-view-page">
         <canvas id="canvas"></canvas>
         <v-card dark color="#fff0f000" class="wish-content" v-if="!wishNotFound">
             <h1><Roller :text="message" :transition="1" :wordWrap="1" :charList="['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']"></Roller></h1>
@@ -9,7 +9,7 @@
             <h4>Wish Not Found</h4>
             <h4>May be invalid link is provided or link got expired..</h4>
         </div>
-        <v-btn x-large class="home-btn" @click="goToHome()">Give a Try</v-btn>
+        <v-btn x-large class="home-btn" @click="goToHome()" v-if="!inPreviewCard">Give a Try</v-btn>
     </div>
 </template>
 <script>
@@ -22,6 +22,12 @@ export default {
     components: {
         Roller,
     },
+    props: {
+        inPreviewCard: Boolean,
+        wishMessage: String,
+        person: String,
+        backgroundAnimation: String,
+    },
     data() {
         return {
             message: '',
@@ -31,8 +37,18 @@ export default {
         }
     },
     created(){
-        this.wishId = this.$route.params.id;
-        this.checkWishAvailability();
+        if(!this.inPreviewCard){
+            this.wishId = this.$route.params.id;
+            this.checkWishAvailability();
+        } else {
+            firework.show();
+        }
+    },
+    mounted() {
+        if(this.inPreviewCard){
+            this.message = this.wishMessage;
+            this.name = this.person;
+        }
     },
     methods: {
         checkWishAvailability(){

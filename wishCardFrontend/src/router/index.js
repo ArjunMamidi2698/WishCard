@@ -5,6 +5,7 @@ import userHome from '@/components/userHome'
 import login from '@/components/login'
 import register from '@/components/register'
 import wishView from '@/components/wishView'
+import previewWish from '@/components/previewWish'
 
 Vue.use(Router)
 
@@ -37,6 +38,10 @@ export default new Router({
       path: '/wishView/:id',
       name: 'WishView',
       component: wishView
+    }, {
+      path: '/previewWish',
+      name: 'PreviewWish',
+      component: previewWish
     }
   ]
 })
