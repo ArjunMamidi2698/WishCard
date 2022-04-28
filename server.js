@@ -16,9 +16,9 @@ var db = mongoose.connection;
 var dbconnected = false;
 //connection to Database using mongoose.connect(url)
 var dbConfig = require('./backend/database/mongoConnectURI');
-// mongoose.connect(dbConfig.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbConfig.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 // local mongodb
-mongoose.connect('mongodb://localhost:27017/wishCard', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/wishCard', { useNewUrlParser: true, useUnifiedTopology: true });
 
 db.on('error', function(){
     dbconnected = false;
